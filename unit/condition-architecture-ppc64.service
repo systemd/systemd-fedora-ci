@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionArchitecture ppc64
+ConditionArchitecture=ppc64
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

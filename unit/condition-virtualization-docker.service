@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionVirtualization docker
+ConditionVirtualization=docker
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

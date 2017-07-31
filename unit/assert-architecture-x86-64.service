@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test AssertArchitecture x86-64
+AssertArchitecture=x86-64
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

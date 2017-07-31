@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionVirtualization kvm
+ConditionVirtualization=kvm
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

@@ -1,0 +1,193 @@
+#!/usr/bin/env python
+
+import argparse
+import errno
+import json
+import os
+import shutil
+import shlex
+import signal
+import socket
+import subprocess
+import sys
+import tempfile
+import time
+import traceback
+import distutils.util
+
+def main(argv):
+    parser = argparse.ArgumentParser(description="Inventory for a container image in a registry")
+    parser.add_argument("--list", action="store_true", help="Verbose output")
+    parser.add_argument('--host', help="Get host variables")
+    parser.add_argument('--docker-extra-args', help="Extra docker arguments for launching container",
+                        default=os.environ.get("TEST_DOCKER_EXTRA_ARGS", ""))
+    parser.add_argument("subjects", nargs="*", default=shlex.split(os.environ.get("TEST_SUBJECTS", "")))
+    opts = parser.parse_args()
+
+    try:
+        if opts.host:
+            name, data = host(opts.host, opts.docker_extra_args)
+        else:
+            data = list(opts.subjects, opts.docker_extra_args)
+        sys.stdout.write(json.dumps(data, indent=4, separators=(',', ': ')))
+    except RuntimeError as ex:
+        sys.stderr.write("{0}: {1}\n".format(os.path.basename(sys.argv[0]), str(ex)))
+        return 1
+
+    return 0
+
+def list(subjects, docker_extra_args):
+    hosts = [ ]
+    variables = { }
+    for subject in subjects:
+        if subject.startswith("docker:"):
+            image = subject[7:]
+            name, vars = host(image, docker_extra_args)
+            if vars:
+                hosts.append(name)
+                variables[name] = vars
+    return { "localhost": { "hosts": hosts, "vars": { } }, "subjects": { "hosts": hosts, "vars": { } }, "_meta": { "hostvars": variables } }
+
+def host(image, docker_extra_args):
+    null = open(os.devnull, 'w')
+
+    try:
+        tty = os.open("/dev/tty", os.O_WRONLY)
+        os.dup2(tty, 2)
+    except OSError:
+        tty = None
+        pass
+
+    directory = tempfile.mkdtemp(prefix="inventory-docker")
+    cidfile = os.path.join(directory, "cid")
+
+    # Determine if container should be kept available for diagnosis after completion
+    try:
+        diagnose = distutils.util.strtobool(os.getenv("TEST_DEBUG", "0"))
+    except ValueError:
+        diagnose = 0
+
+    # Check for any additional arguments to include when starting docker container
+    try:
+        extra_arg_list = shlex.split(docker_extra_args)
+    except ValueError:
+        raise RuntimeError("Could not parse DOCKER_EXTRA_ARGS")
+
+    sys.stderr.write("Launching Docker container for {0}\n".format(image))
+
+    # Make sure the docker service is running
+    cmd = [
+        "/usr/sbin/service", "docker", "start"
+    ]
+
+    try:
+        subprocess.check_call(cmd, stdout=sys.stderr.fileno())
+    except subprocess.CalledProcessError as ex:
+        raise RuntimeError("Could not start docker service")
+
+    cmd = [
+        "/usr/bin/docker", "build", "--rm", "-t", image, "."
+        ]
+
+    try:
+        subprocess.check_call(cmd, stdout=sys.stderr.fileno())
+    except subprocess.CalledProcessError as ex:
+        raise RuntimeError("Could not build container image: {0}".format(image))
+
+    # And launch the actual container
+    cmd = [ "/usr/bin/docker", "run", "--detach", "--cidfile={0}".format(cidfile), "-itd" , "--privileged", image ]
+           #  extra_arg_list + [image]
+
+    try:
+        subprocess.check_call(cmd, stdout=sys.stderr.fileno())
+    except subprocess.CalledProcessError as ex:
+        raise RuntimeError("Could not run container image: {0}".format(image))
+
+    # Read out the container environment variable
+    for x in xrange(1, 90):
+        if os.path.exists(cidfile):
+            break
+        time.sleep(1)
+    else:
+        raise RuntimeError("Could not find container file for launched container")
+
+    with open(cidfile, "r") as f:
+        name = f.read().strip()
+
+    # Now install the necessary stuff in the container :S
+    install = [
+        "/usr/bin/docker", "exec", name, "/usr/bin/yum", "-y", "install",
+        "python2", "python2-dnf", "libselinux-python"
+    ]
+    try:
+        subprocess.check_call(install, stdout=sys.stderr.fileno())
+    except subprocess.CalledProcessError as ex:
+        raise RuntimeError("Could not install Ansible dependencies in launched container")
+
+    # Directory to place artifacts
+    artifacts = os.environ.get("TEST_ARTIFACTS", os.path.join(os.getcwd(), "artifacts"))
+
+    # The variables
+    variables = {
+        "ansible_connection": "docker",
+    }
+
+    # Process of our parent
+    ppid = os.getppid()
+
+    child = os.fork()
+    if child:
+        return name, variables
+
+    # Daemonize and watch the processes
+    os.chdir("/")
+    os.setsid()
+    os.umask(0)
+
+    if tty is None:
+        tty = null.fileno()
+
+    # Duplicate standard input to standard output and standard error.
+    os.dup2(null.fileno(), 0)
+    os.dup2(tty, 1)
+    os.dup2(tty, 2)
+
+    # Now wait for the parent process to go away, then kill the VM
+    while True:
+        time.sleep(3)
+
+        try:
+            os.kill(ppid, 0)
+        except OSError:
+            break # Either of the processes no longer exist
+
+    if diagnose:
+        sys.stderr.write("\n")
+        sys.stderr.write("DIAGNOSE: docker exec -it {0} /bin/bash\n".format(name))
+        sys.stderr.write("DIAGNOSE: kill {0} # when finished\n".format(os.getpid()))
+
+        def _signal_handler(*args):
+            sys.stderr.write("\nDIAGNOSE ending...\n")
+
+        signal.signal(signal.SIGTERM, _signal_handler)
+        signal.pause()
+
+    # Dump the container logs
+    try:
+        os.makedirs(artifacts)
+    except OSError as exc:
+        if exc.errno != errno.EEXIST or not os.path.isdir(artifacts):
+            raise
+    log = os.path.join(artifacts, "{0}.log".format(os.path.basename(image)))
+
+    # Kill the container
+    with open(log, "w") as f:
+        subprocess.call(["/usr/bin/docker", "logs", name ], stdout=f.fileno())
+    subprocess.call(["/usr/bin/docker", "kill", name ], stdout=null.fileno())
+    subprocess.call(["/usr/bin/docker", "rm", "-f", name ], stdout=null)
+
+    shutil.rmtree(directory)
+    sys.exit(0)
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))

@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionVirtualization nspawn
+ConditionVirtualization=systemd-nspawn
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

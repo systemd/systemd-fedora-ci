@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionVirtualization qemu
+ConditionVirtualization=qemu
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

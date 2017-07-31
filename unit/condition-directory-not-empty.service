@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionDirectoryNotEmpty
+ConditionDirectoryNotEmpty=/run/condition_directory_not_empty
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

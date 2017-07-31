@@ -1,0 +1,7 @@
+[Unit]
+Description=Testsuite service
+After=multi-user.target
+
+[Service]
+ExecStart=/bin/sh -x -c '/usr/bin/test-rlimits.sh'
+Type=oneshot

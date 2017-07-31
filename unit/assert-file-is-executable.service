@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test AssertFileIsExecutable
+AssertFileIsExecutable=/run/test-assert-file-is-executable
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test AssertPathExists
+AssertPathExists=/run/assert_path_not_exists
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

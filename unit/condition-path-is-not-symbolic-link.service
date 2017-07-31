@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionPathIsSymbolicLink
+ConditionPathIsSymbolicLink=/run/path_is_not_symbolic_link
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

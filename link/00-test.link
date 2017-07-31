@@ -1,0 +1,10 @@
+[Match]
+MACAddress=00:01:02:aa:bb:cc
+
+[Link]
+AutoNegotiation=0
+BitsPerSecond=1000k
+MTUBytes=1280
+TCPSegmentationOffload=on
+GenericSegmentationOffload=on
+GenericReceiveOffload=on

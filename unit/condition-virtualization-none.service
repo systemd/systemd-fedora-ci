@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionVirtualization none
+ConditionVirtualization=false
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

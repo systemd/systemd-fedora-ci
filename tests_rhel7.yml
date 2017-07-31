@@ -1,0 +1,31 @@
+- hosts: localhost
+  roles:
+    - role: standard-test-beakerlib
+      tags:
+        - classic
+      tests:
+        - basic
+        - hostnamectl
+        - localectl
+        - loginctl
+        - timedatectl
+        - sched
+        - path
+        - execute
+        - activate
+        - timers
+        - socket
+        - nspawn-smoke
+# Disabled: https://bugzilla.redhat.com/show_bug.cgi?id=1545676
+#       - issue-1981
+        - issue-2467
+        - issue-3166
+# Disabled: https://bugzilla.redhat.com/show_bug.cgi?id=1546731
+#       - rlimits
+      required_packages:
+        - findutils                 # beakerlib needs find command
+        - lsof                      # socket test needs this package
+        - systemd
+        - nc
+        - python                    # beakerlib-journalling requires python
+        - busybox

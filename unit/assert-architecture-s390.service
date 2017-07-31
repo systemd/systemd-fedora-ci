@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test AssertArchitecture s390
+AssertArchitecture=s390
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test AssertPathIsSymbolicLink
+AssertPathIsSymbolicLink=/run/test-assert-path-is-symbolic-link
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

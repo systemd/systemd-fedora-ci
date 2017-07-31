@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Tet AssertFileNotEmpty
+AssertFileNotEmpty=/run/assert-file-is-not-empty
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

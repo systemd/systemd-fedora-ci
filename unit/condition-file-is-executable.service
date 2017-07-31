@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionFileIsExecutable
+ConditionFileIsExecutable=/run/file-is-executable
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

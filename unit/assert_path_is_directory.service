@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test AssertPathIsDirectory
+AssertPathIsDirectory=/run/assert_path_is_directory
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test AssertVirtualization lxc-libvirt
+AssertVirtualization=lxc-libvirt
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

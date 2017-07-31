@@ -1,0 +1,6 @@
+[Unit]
+Description=Service Test OnFailure
+
+[Service]
+ExecStart=/bin/sh -x -c 'touch /run/on-failure-test'
+Type=oneshot

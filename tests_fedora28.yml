@@ -1,0 +1,37 @@
+- hosts: localhost
+  roles:
+    - role: standard-test-beakerlib
+      tags:
+        - classic
+      tests:
+        - basic
+        - hostnamectl
+        - localectl
+        - timedatectl
+        - sched
+        - path
+        - execute
+        - unit
+        - timers
+        - issue-1981
+        - issue-2467
+        - issue-3166
+        - rlimits
+        - modules-load
+        - socket
+        - resolve
+        - link
+        - nspawn
+        - killmode
+        - activate
+#       - network
+#       - networkd-wait-online
+      required_packages:
+        - findutils                 # beakerlib needs find command
+        - lsof                      # socket test needs this package
+        - systemd
+        - ethtool
+        - nc
+        - python                    # beakerlib-journalling requires python
+        - dnsmasq                   # networkd
+        - PolicyKit                 # networkd

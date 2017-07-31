@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test AssertDirectoryNotEmpty
+AssertDirectoryNotEmpty=/tmp/assert_directory_is_empty
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

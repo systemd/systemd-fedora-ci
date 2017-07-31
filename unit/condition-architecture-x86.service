@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionArchitecture x86
+ConditionArchitecture=x86
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test AssertVirtualization kvm
+AssertVirtualization=kvm
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

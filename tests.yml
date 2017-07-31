@@ -1,0 +1,123 @@
+- hosts: localhost
+  roles:
+    - role: standard-test-beakerlib
+      tags:
+        - classic
+      tests:
+        - basic
+        - upstream
+        - hostnamectl
+        - tmpfiles
+        - killmode
+        - localectl
+        - loginctl
+        - timedatectl
+        - rlimits
+        - unit
+        - activate
+        - modules-load
+        - timers
+        - resolve
+        - nspawn-smoke
+        - nspawn
+        - socket
+        - link
+        - issue-1981
+        - issue-2467
+        - issue-3166
+        - network
+        - networkd-wait-online
+      required_packages:
+        - ethtool                   # link tests needs this package
+        - findutils                 # beakerlib needs find command
+        - kernel-modules-extra      # network test needs vcan module
+        - lsof                      # socket test needs this package
+        - systemd
+        - systemd-tests
+        - nc
+        - python                    # beakerlib-journalling requires python
+        - busybox
+        - dnsmasq                   # networkd
+        - PolicyKit                 # networkd
+        - python3
+        - python3-psutil
+
+- hosts: localhost
+  roles:
+    - role: standard-test-beakerlib
+      tags:
+        - atomic
+      tests:
+        - basic
+        - upstream
+        - hostnamectl
+        - tmpfiles
+        - killmode
+        - localectl
+        - loginctl
+        - timedatectl
+        - rlimits
+        - unit
+        - activate
+        - modules-load
+        - timers
+# disabled due BZ#1494426
+#       - socket
+        - link
+        - issue-1981
+        - issue-2467
+        - issue-3166
+# disabled due BZ#1493478
+#       - network
+#       - networkd-wait-online
+      required_packages:
+        - ethtool                   # link tests needs this package
+        - dnsmasq                   # networkd
+        - PolicyKit                 # networkd
+        - systemd-tests
+        - python3
+        - python3-psutil
+
+- hosts: localhost
+  roles:
+    - role: standard-test-beakerlib
+      tags:
+        - container
+      tests:
+        - basic
+        - upstream
+        - hostnamectl
+        - tmpfiles
+        - killmode
+        - localectl
+        - loginctl
+        - timedatectl
+        - rlimits
+        - unit
+        - activate
+        - modules-load
+        - timers
+# disabled due BZ#1494426
+#       - socket
+        - link
+        - issue-1981
+        - issue-2467
+        - issue-3166
+# disabled due BZ#1493478
+#       - network
+#       - networkd-wait-online
+      required_packages:
+        - ethtool                   # link tests needs this package
+        - findutils                 # beakerlib needs find command
+        - lsof                      # socket test needs this package
+        - systemd
+        - policycoreutilsi
+        - nc
+        - systemd-tests
+        - python
+        - busybox
+        - systemd-container
+        - dnsmasq                   # networkd
+        - PolicyKit                 # networkd
+        - python3
+        - python3-psutil

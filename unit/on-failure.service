@@ -1,0 +1,7 @@
+[Unit]
+Description=Service Test OnFailure
+OnFailure=on-failure-run.service
+
+[Service]
+ExecStart=/bin/false
+Type=oneshot

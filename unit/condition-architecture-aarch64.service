@@ -1,0 +1,8 @@
+[Unit]
+Description=Service Test ConditionArchitecture aarch64
+ConditionArchitecture=aarch64
+
+[Service]
+ExecStart=/bin/true
+Type=oneshot
+RemainAfterExit=yes

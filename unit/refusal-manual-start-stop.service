@@ -1,0 +1,9 @@
+[Unit]
+Description=Service Test RefuseManualStart RefuseManualStop
+RefuseManualStart=true
+RefuseManualStop=true
+
+[Service]
+ExecStart=/bin/false
+Type=oneshot
+RemainAfterExit=yes

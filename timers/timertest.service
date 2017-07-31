@@ -1,0 +1,6 @@
+[Unit]
+Description=TimerTest
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/echo "hello timer-test"
