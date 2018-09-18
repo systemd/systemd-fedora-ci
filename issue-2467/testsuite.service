@@ -1,0 +1,10 @@
+[Unit]
+Description=Testsuite service
+After=multi-user.target
+
+[Service]
+Type=oneshot
+StandardOutput=tty
+StandardError=tty
+ExecStart=/bin/sh -e -x -c 'rm -f /var/run/nonexistent; systemctl start test.socket; echo a | nc -U /run/test.ctl; >/var/run/testok'
+TimeoutStartSec=10s

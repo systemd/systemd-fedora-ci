@@ -3,6 +3,5 @@ Description=Testsuite service
 After=multi-user.target
 
 [Service]
-RemainAfterExit=yes
-ExecStart=/bin/sh -x -c '/usr/bin/test-rlimits.sh'
+ExecStart=/usr/bin/test-journal.sh
 Type=oneshot

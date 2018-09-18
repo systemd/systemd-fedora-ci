@@ -1,0 +1,6 @@
+[Unit]
+Requires=test.socket
+ConditionPathExistsGlob=/var/run/nonexistent
+
+[Service]
+ExecStart=/bin/true

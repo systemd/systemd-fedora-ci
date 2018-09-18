@@ -45,8 +45,7 @@ class SystemdTimerTests(unittest.TestCase, SystemdUtility):
         self.assertRegex(output, 'timertest.service')
 
         time.sleep(5)
-
-        output = subprocess.check_output(['systemctl', 'status', 'timertest.service']).rstrip().decode('utf-8')
+        output = subprocess.check_output(['journalctl', '-u', 'timertest.service']).rstrip().decode('utf-8')
         print(output)
         self.assertRegex(output, 'hello timer-test')
 

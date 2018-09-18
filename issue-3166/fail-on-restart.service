@@ -1,0 +1,7 @@
+[Unit]
+Description=Fail on restart
+
+[Service]
+Type=simple
+ExecStart=/bin/false
+Restart=always

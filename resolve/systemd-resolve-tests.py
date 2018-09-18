@@ -18,7 +18,7 @@ class SystemdResolveTests(unittest.TestCase):
 
     def set_resolve_conf(self):
         resolvers = []
-        dns=''
+        dns = ''
 
         with open(resolv_file, 'r' ) as resolvconf:
             for line in resolvconf.readlines():

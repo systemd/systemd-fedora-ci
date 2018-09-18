@@ -55,7 +55,6 @@ rlJournalStart
         rlRun "hostnamectl > /tmp/hostnamectl_test"
         rlAssertGrep "computer-laptop-test" "/tmp/hostnamectl_test"
         rlRun "hostnamectl set-icon-name ''"
-
     rlPhaseEnd
 
     rlPhaseStartCleanup
